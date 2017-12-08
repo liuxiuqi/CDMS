@@ -10,8 +10,6 @@ namespace CDMS.Data
 {
     public interface IUserRepository : IRepository<User>
     {
-        IEnumerable<User> GetList(int top, string key);
-
         /// <summary>
         /// 获得用户信息
         /// </summary>
@@ -53,22 +51,6 @@ namespace CDMS.Data
         public UserRepository()
         {
 
-        }
-
-        public IEnumerable<User> GetList(int top, string key)
-        {
-            string sqlText = string.Empty;
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-
-            if (!key.IsEmpty())
-            {
-                sqlText = string.Format(@"
-SELECT TOP {0} a.* from T_User AS a WHERE ISNULL(a.Status,'')<>'DELETED' AND (a.WWID LIKE '%'+@key+'%' OR a.CN_Name LIKE '%'+@key+'%' OR a.EN_Name LIKE '%'+@key+'%' OR a.Email LIKE '%'+@key+'%')  ORDER BY a.WWID ", top);
-                parameters.Add("@key", key);
-            }
-
-            //sql.OrderBy(m => m.UserID);
-            return base.GetList(sqlText, parameters);
         }
 
         public User GetUserByWWID(string wwid)

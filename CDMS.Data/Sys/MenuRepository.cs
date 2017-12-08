@@ -54,15 +54,15 @@ namespace CDMS.Data
         {
             var roleMenuSql = base.GetSqlLam<RoleMenu>();
 
-            var menuSql = roleMenuSql.Join<Menu>((rm, m) => rm.MENUID == m.ID, aliasName: "b");
-            menuSql.Where(m => m.ENABLED == true).SelectAll();
-
             var roleUserSql = base.GetSqlLam<RoleUser>();
             roleUserSql.Where(m => m.USERID == userId).Select(m => m.ROLEID);
 
             roleMenuSql.In(m => m.ROLEID, roleUserSql);
+            roleMenuSql.SelectDistinct(m => m.MENUID);
 
-            return GetList(menuSql.GetSql(), menuSql.GetParameters());
+            sql.Where(m => m.ENABLED == true).In(m => m.ID, roleMenuSql);
+
+            return GetList();
         }
     }
 }
