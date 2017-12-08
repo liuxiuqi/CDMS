@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<form class="layui-form" id="form1">
+    <blockquote class="layui-elem-quote">
+        <div class="layui-form-item">
+            <label class="layui-form-label">操作人:</label>
+            <div class="layui-input-inline">
+                <input type="text" value="" id="txtWWID" placeholder="请输入WWID" class="layui-input" />
+            </div>
+
+            <label class="layui-form-label"> 操作类型:</label>
+            <div class="layui-input-inline">
+                <select type="text" id="actionType" name="actionType" autocomplete="off" placeholder="请选择类型" class="layui-select">
+                    <option value="0">请选择类型</option>
+                    <option value="1">添加</option>
+                    <option value="2">修改</option>
+                    <option value="3">删除</option>
+                </select>
+            </div>
+
+            <label class="layui-form-label"> 操作时间:</label>
+            <div class="layui-input-inline">
+                <input type="text" value="" id="txtDate" placeholder="yyyy-MM-dd" class="layui-input" />
+            </div>
+            <a class="layui-btn search_btn" id="btn-query">查询</a>
+        </div>
+    </blockquote>
+</form>
+<div class="layui-form">
+    <table class="layui-table" id="logList"></table>
+</div>
+
+@section styles{
+    <style type="text/css">
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-form-label {
+            width: 60px;
+            padding: 9px 5px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 0px;
+        }
+    </style>
+}
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'laydate', 'table', 'form', 'utils'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns, laydate = layui.laydate;
+
+            laydate.render({ elem: '#txtDate', value: new Date() });
+
+            var tableId = 'logList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/log/getList',
+                method: 'post',
+                tr_click_checkable: true,
+                page: true,
+                limit: 20,
+                limits: [20, 30, 50],
+                where: getParameters(),
+                cols: [
+                     [
+                     { field: 'CREATENAME', title: '操作人', align: 'center', width: '10%' },
+                     {
+                         field: 'ACTIONTYPE', title: '操作类型', width: '10%', align: 'center', content: function (value, item, index) {
+                             var result = "";
+                             switch (value) {
+                                 case 1:
+                                     result = "添加";
+                                     break;
+                                 case 2:
+                                     result = "修改";
+                                     break;
+                                 case 3:
+                                     result = "删除";
+                                     break;
+                                 default:
+                             }
+                             return result;
+                         }
+                     },
+                     { field: 'TITLE', title: '操作标题', width: '10%', align: 'center' },
+                     {
+                         field: 'CONTENT', title: '操作内容', width: '55%', content: function (value) {
+                             if (value) value = value.replace('\r\n', '<br/>');
+                             return value;
+                         }
+                     },
+                       {
+                           field: 'CREATEDATE', title: '操作时间', width: '15%', content: function (value) {
+                               var fmt = 'yyyy-MM-dd hh:mm:ss';
+                               return utils.formatDate(value, fmt);
+                           }
+                       },
+                     ]
+                ]
+            };
+            table.render(options);
+
+            $('#' + btn.btn_query).click(function () {
+                table.reload(tableId, { where: getParameters() });
+            });
+            function getParameters() {
+                var queryJson = { LOGTYPE: 100, ACTIONTYPE: $("#actionType").val(), CREATEBY: $("#txtWWID").val(), CREATEDATE: $("#txtDate").val() };
+                var json = JSON.stringify(queryJson);
+                return { json: json };
+            }
+        });
+    </script>
+}

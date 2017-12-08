@@ -1,0 +1,113 @@
+﻿<form class="layui-form" id="form1">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称<span class="red">*</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="NAME" autocomplete="off" placeholder="请输入名称" class="layui-input" lay-verify="required" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">父名称<span class="red">*</span></label>
+            <div class="layui-input-inline">
+                <select type="text" id="PARENTID" name="PARENTID" lay-filter="PARENTID" autocomplete="off" placeholder="请选择父名称" class="layui-select"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">代码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="CODE" autocomplete="off" placeholder="请输入代码" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">导航</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="switch" name="ISNAV" lay-filter="ISNAV" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">特殊</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="switch" name="ISSPECIAL" lay-filter="ISSPECIAL" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">TARGET</label>
+            <div class="layui-input-inline">
+                <select type="text" name="TARGET" autocomplete="off" placeholder="请选择TARGET" class="layui-select">
+                    <option value="1">_blank(新开页面)</option>
+                    <option value="2">_self(当前页面)</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-inline">
+                <input type="text" name="SORTID" autocomplete="off" value="100" placeholder="请输入排序" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">URL</label>
+        <div class="layui-input-block">
+            <input type="text" name="URL" autocomplete="off" placeholder="请输入URL" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <textarea type="text" name="REMARK" autocomplete="off" placeholder="请输入角色描述" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="save">保存</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancel">取消</button>
+            <input type="hidden" name="ID" value="0" />
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['form', 'utils', 'treeSelector'], function () {
+            var $ = layui.jquery, form = layui.form, utils = layui.utils, tree = layui.treeSelector;
+
+            form.on('submit(save)', function (data) {
+                utils.post('/sys/category/save', data.field);
+                return false;
+            });
+
+            form.on('switch(ISNAV)', function (data) {
+                $('input[name="ISNAV"]').val(data.elem.checked);
+            });
+
+            form.on('switch(ISSPECIAL)', function (data) {
+                $('input[name="ISSPECIAL"]').val(data.elem.checked);
+            });
+
+            $('#cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var treeOption = {
+                type: 'remote',
+                url: '/sys/category/getTreeSelectList',
+                selector: '#PARENTID',
+                repeatString: '&nbsp;&nbsp;',//
+                preString: '',
+                callback: function () {
+                    var json = '@Html.Raw(ViewBag.Json)';
+                    if (json && json.length > 0) {
+                        utils.setFormData(json);
+                    }
+                    form.render();
+                }
+            };
+            tree.set(treeOption).render();
+        });
+    </script>
+}

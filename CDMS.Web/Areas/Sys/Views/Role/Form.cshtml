@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "角色";
+}
+<form class="layui-form" id="form1">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="NAME" autocomplete="off" placeholder="请输入角色名称" class="layui-input" lay-verify="required" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="SORTID" autocomplete="off" value="100" placeholder="请输入排序" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <textarea type="text" name="REMARK" autocomplete="off" placeholder="请输入角色描述" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="save">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary" id="cancel">取消</button>
+            <input type="hidden" name="ID" value="0" />
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['form', 'utils'], function () {
+            var $ = layui.jquery, form = layui.form, utils = layui.utils;
+
+            form.on('submit(save)', function (data) {
+                utils.post('/sys/role/save', { old: getOldObject(), model: data.field });
+                return false;
+            });
+
+            $('#cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var json = '@Html.Raw(ViewBag.RoleJson)';
+            if (json && json.length > 0) {
+                utils.setFormData(json);
+            }
+
+            function getOldObject() {
+                if (json && json.length > 0) {
+                    return JSON.parse(json);
+                }
+                return null;
+            }
+        });
+    </script>
+}

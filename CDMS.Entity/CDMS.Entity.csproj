@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{30A0CB5D-84C6-4F92-A450-5C723BB8B95F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CDMS.Entity</RootNamespace>
+    <AssemblyName>CDMS.Entity</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\ColumnAttribute.cs" />
+    <Compile Include="Attributes\TableAttribute.cs" />
+    <Compile Include="Common\LayuiPaginationIn.cs" />
+    <Compile Include="Common\LayuiPaginationOut.cs" />
+    <Compile Include="Common\LayuiUploadImageOut.cs" />
+    <Compile Include="Sys\Article.cs" />
+    <Compile Include="Sys\Button.cs" />
+    <Compile Include="Common\ServiceConst.cs" />
+    <Compile Include="Sys\Category.cs" />
+    <Compile Include="Sys\Extend\ActionType.cs" />
+    <Compile Include="Sys\Extend\DevelopLog.cs" />
+    <Compile Include="Sys\Extend\ImageVM.cs" />
+    <Compile Include="Sys\Extend\LOGType.cs" />
+    <Compile Include="Sys\Extend\MenuTree.cs" />
+    <Compile Include="Sys\Extend\MenuType.cs" />
+    <Compile Include="Sys\Extend\TableType.cs" />
+    <Compile Include="Sys\Image.cs" />
+    <Compile Include="Sys\ImageDetail.cs" />
+    <Compile Include="Sys\Log.cs" />
+    <Compile Include="Sys\Menu.cs" />
+    <Compile Include="Sys\Org.cs" />
+    <Compile Include="Sys\OrgUser.cs" />
+    <Compile Include="Sys\Role.cs" />
+    <Compile Include="Sys\RoleMenu.cs" />
+    <Compile Include="Sys\RoleUser.cs" />
+    <Compile Include="Sys\User.cs" />
+    <Compile Include="Common\AjaxResult.cs" />
+    <Compile Include="Common\ApiResult.cs" />
+    <Compile Include="Common\IDependency.cs" />
+    <Compile Include="Common\Pagination.cs" />
+    <Compile Include="Common\Suggestion.cs" />
+    <Compile Include="Common\WebConst.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sys\UserLogin.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

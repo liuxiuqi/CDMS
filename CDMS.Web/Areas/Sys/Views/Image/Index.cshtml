@@ -1,0 +1,94 @@
+﻿
+<blockquote class="layui-elem-quote">
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            <input type="text" value="" id="txtKey" placeholder="请输入关键字" class="layui-input" />
+        </div>
+        <a class="layui-btn search_btn" id="btn-query">查询</a>
+    </div>
+    @Html.Action("button", "menu")
+</blockquote>
+<div class="layui-form">
+    <table class="layui-table" id="imageList"></table>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'utils'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns;
+
+            var tableId = 'imageList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/image/getList',
+                method: 'post',
+                tr_click_checkable: true,
+                page: true,
+                limit: 10,
+                limits: [10, 20, 30],
+                where: getParameters(),
+                cols: [
+                     [{ checkbox: true, width: '5%' },
+                     { field: 'TITLE', title: '标题', width: '20%' },
+                     { field: 'CODE', title: '代码', width: '10%' },
+                     { field: 'STATUS', title: '状态', width: '10%' },
+                     { field: 'SUMMARY', title: '描述', width: '30%' },
+                     { field: 'SORTID', title: '排序', width: '10%', align: 'center' }
+                     ]
+                ]
+            };
+            table.render(options);
+
+            $('#' + btn.btn_query).click(function () {
+                table.reload(tableId, { where: getParameters() });
+            });
+
+            $('#' + btn.btn_add).click(function () {
+                var index = utils.open({
+                    title: '添加图片',
+                    url: '/sys/image/form',
+                    area: ['600px', '400px']
+                });
+            });
+
+            $('#' + btn.btn_edit).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                else if (len > 1) {
+                    utils.alert('只能选择一行修改');
+                    return;
+                }
+                var index = utils.open({
+                    title: '修改图片',
+                    url: '/sys/image/form?id=' + rows[0].ID,
+                    area: ['600px', '400px']
+                });
+            });
+
+            $('#' + btn.btn_delete).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                utils.confirm('确实要删除选择行吗?', function () {
+                    var ids = [];
+                    $.each(rows, function (i, item) {
+                        ids.push(item.ID);
+                    });
+                    utils.post('/sys/image/delete', { ids: ids });
+                });
+            });
+
+            function getParameters() {
+                return { json: $('#txtKey').val() };
+            }
+        });
+    </script>
+}

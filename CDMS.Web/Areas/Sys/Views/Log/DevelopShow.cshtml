@@ -1,0 +1,20 @@
+﻿
+@{
+    string content = ViewBag.Content;
+}
+
+<div>
+    <pre class="layui-code" id="mycode">@content</pre>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['code'], function () {
+            layui.code({
+                elem: '#mycode',
+                title: '日志',
+                about: false
+            });
+        });
+    </script>
+}

@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<blockquote class="layui-elem-quote">
+    @Html.Action("button", "menu")
+</blockquote>
+<div class="layui-form">
+    <table class="layui-table" id="menuList"></table>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'utils', 'treetable'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns;
+
+            var tableId = 'menuList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/menu/getList',
+                method: 'post',
+                height: 650,
+                tr_click_checkable: true,
+                cols: [
+                     [{ space: true, width: '10%' },
+                     { checkbox: true, width: '5%' },
+                     {
+                         field: 'IMG', title: 'ICON', width: '10%', align: 'center',
+                         content: function (value, item, index) {
+                             if (value) return '<i class="layui-icon">' + value + '</i>';
+                             return '';
+                         }
+                     },
+                     { field: 'NAME', title: '名称', width: '20%' },
+                     {
+                         field: 'TYPE', title: '类型', width: '10%', align: 'center',
+                         content: function (value, item, index) {
+                             var v = '';
+                             switch (value) {
+                                 case 1:
+                                     v = '目录';
+                                     break;
+                                 case 2:
+                                     v = '菜单';
+                                     break;
+                                 case 3:
+                                     v = '按钮';
+                                     break;
+                             }
+                             return v;
+                         }
+                     },
+                     { field: 'URL', title: 'URL', width: '20%' },
+                     { field: 'SORTID', title: '排序', width: '10%', align: 'center' }
+                     ]
+                ],
+                rowAttributes: function (item, index) {
+                    return { 'data-tt-id': item.ID, 'data-tt-parent-id': item.PARENTID };
+                },
+                done: function () {
+                    $('.layui-table-main table').treetable({ initialState: 'expand', cellFilter: '.layui-table-cell', stringExpand: '展开', stringCollapse: '折叠' });
+                }
+            };
+            table.render(options);
+
+            $('#' + btn.btn_add).click(function () {
+                var index = utils.open({
+                    title: '添加菜单',
+                    url: '/sys/menu/form',
+                    area: ['700px', '600px']
+                });
+            });
+
+            $('#' + btn.btn_edit).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                else if (len > 1) {
+                    utils.alert('只能选择一行修改');
+                    return;
+                }
+                var index = utils.open({
+                    title: '修改菜单',
+                    url: '/sys/menu/form?id=' + rows[0].ID,
+                    area: ['700px', '600px']
+                });
+            });
+
+            $('#' + btn.btn_delete).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                utils.confirm('确实要删除选择行吗?', function () {
+                    var ids = [];
+                    $.each(rows, function (i, item) {
+                        ids.push(item.ID);
+                    });
+                    utils.post('/sys/menu/delete', { ids: ids });
+                });
+            });
+
+            $('#' + btn.btn_button).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                else if (len > 1) {
+                    utils.alert('只能选择一行分配按钮');
+                    return;
+                }
+                if (rows[0].TYPE != 2) {
+                    utils.alert('只能给菜单分配按钮');
+                    return;
+                }
+                var index = utils.open({
+                    title: '分配按钮',
+                    url: '/sys/button/list?pid=' + rows[0].ID,
+                    area: ['700px', '600px']
+                });
+            });
+        });
+    </script>
+}

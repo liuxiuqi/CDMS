@@ -1,0 +1,107 @@
+﻿<div class="layui-form">
+    <table class="layui-table" id="menuList"></table>
+</div>
+<div class="right">
+    <button class="layui-btn" id="btn-sure" type="button">确定</button>
+    <button type="button" class="layui-btn layui-btn-primary" id="btn-cancel">取消</button>
+    <input type="hidden" id="roleId" name="roleId" value="@ViewBag.RoleId" />
+</div>
+
+@section styles{
+    <style type="text/css">
+        .laytable-cell-space {
+            width: 100px;
+        }
+    </style>
+}
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'utils', 'treetable'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns;
+
+            var tableId = 'menuList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/menu/getList',
+                method: 'post',
+                height: 370,
+                tr_click_checkable: true,
+                cols: [
+                     [{ space: true, width: '20%' },
+                     {
+                         checkbox: true,width: '15%', LAY_CHECKED: function (v, item, i) {
+                             return getChkFlag(item.ID);
+                         }
+                     },
+                     {
+                         field: 'IMG', title: 'ICON', width: '10%', align: 'center',
+                         content: function (value, item, index) {
+                             if (value) return '<i class="layui-icon">' + value + '</i>';
+                             return '';
+                         }
+                     },
+                     { field: 'NAME', title: '名称', width: '20%' },
+                     {
+                         field: 'TYPE', title: '类型', width: '15%', align: 'center',
+                         content: function (value, item, index) {
+                             var v = '';
+                             switch (value) {
+                                 case 1:
+                                     v = '目录';
+                                     break;
+                                 case 2:
+                                     v = '菜单';
+                                     break;
+                                 case 3:
+                                     v = '按钮';
+                                     break;
+                             }
+                             return v;
+                         }
+                     },
+                     { field: 'URL', title: 'URL', width: '20%' }
+                     ]
+                ],
+                rowAttributes: function (item, index) {
+                    return { 'data-tt-id': item.ID, 'data-tt-parent-id': item.PARENTID };
+                },
+                done: function () {
+                    $('.layui-table-main table').treetable({ initialState: 'expand', cellFilter: '.layui-table-cell', stringExpand: '展开', stringCollapse: '折叠' });
+                }
+            };
+            table.render(options);
+
+            $('#btn-sure').click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何授权菜单');
+                    return;
+                }
+                var ids = [];
+                $.each(rows, function (i, item) {
+                    ids.push(item.ID);
+                });
+                utils.post('/sys/role/addRoleMenus', { roleId: $('#roleId').val(), ids: ids });
+            });
+
+            $('#btn-cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var json = '@Html.Raw(ViewBag.MenuJson)';
+            var menus = json ? JSON.parse(json) : [];
+            function getChkFlag(id) {
+                var flag = false;
+                $.each(menus, function (i, item) {
+                    if (item.MENUID === id) {
+                        flag = true;
+                        return false;
+                    }
+                });
+                return flag;
+            }
+        });
+    </script>
+}

@@ -1,0 +1,33 @@
+﻿@{
+    long version = DateTime.Now.Ticks;
+    string name = CDMS.Web.UIStyleConfig.GetCurrentUIName();
+    string path = Url.Content(string.Format("~/Resources/css/themes/{0}.css?v={1}", name, version));
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link href="~/Resources/plugins/layui-dev/css/layui.css?v=1.1" rel="stylesheet" />
+    <link href="~/Resources/css/form.css?v=1.5" rel="stylesheet" />
+    <link href="@path" rel="stylesheet" id="uiStyle" />
+    @RenderSection("styles", false)
+</head>
+<body>
+    <div class="layui-fluid" style="padding-top:10px;">
+        @RenderBody()
+    </div>
+    <script src="~/Resources/plugins/layui-dev/layui.js"></script>
+    <script type="text/javascript">
+        layui.config({ base: '/resources/js/', version: '1.80' });
+    </script>
+    @RenderSection("scripts", false)
+</body>
+</html>

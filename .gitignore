@@ -3,3 +3,17 @@
 ################################################################################
 
 /CDMS.Service/bin
+/CDMS.Service/obj
+/.vs
+/CDMS.Data/bin
+/CDMS.Data/obj
+/CDMS.Entity/bin
+/CDMS.Entity/obj
+/CDMS.Utility/bin
+/CDMS.Utility/obj
+/CDMS.Web/bin
+/CDMS.Web/Log
+/CDMS.Web/obj
+/CDMS.Web/UploadFiles/ArticleImages/2017-11-20
+/CDMS.Web/UploadFiles/UserFace/1_1711141525183401467.jpg
+/CDMS.Web/UploadFiles/UserFace/2_1711141531174175399.jpg

@@ -1,0 +1,15 @@
+﻿@using CDMS.Entity
+@model IEnumerable<Menu>
+@{
+    Layout = null;
+    var buttons = Model;
+}
+@if (buttons != null && buttons.Count() > 0)
+{
+    foreach (var item in buttons)
+    {
+        <div class="layui-inline">
+            <a class="layui-btn @item.CLASSNAME" id="@item.CODE">@if (!string.IsNullOrEmpty(item.IMG)){<i class="layui-icon">@Html.Raw(item.IMG)</i>}@item.NAME</a>
+        </div>
+    }
+}

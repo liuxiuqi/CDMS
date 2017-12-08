@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "角色";
+}
+<form class="layui-form" id="form1">
+    <div class="layui-form-item">
+        <label class="layui-form-label">按钮名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="NAME" autocomplete="off" placeholder="请输入按钮名称" class="layui-input" lay-verify="required" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">按钮ID</label>
+        <div class="layui-input-block">
+            <input type="text" name="CODE" autocomplete="off" placeholder="请输入按钮ID" class="layui-input" lay-verify="required" />
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">ICON</label>
+        <div class="layui-input-inline">
+            <div>
+                <i class="layui-icon" id="i-icon" style="font-size:28px; margin-right:50px;"></i>
+                <a class="layui-btn layui-btn-mini" id="btn-icon">选择</a>
+            </div>
+            <input type="text" id="IMG" name="IMG" autocomplete="off" placeholder="请输入样式" class="layui-input hidden" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">样式</label>
+        <div class="layui-input-block">
+            <input type="text" name="CLASSNAME" autocomplete="off" value="" placeholder="请输入样式" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="SORTID" autocomplete="off" value="100" placeholder="请输入排序" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <textarea type="text" name="REMARK" autocomplete="off" placeholder="请输入按钮描述" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="save">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary" id="cancel">取消</button>
+            <input type="hidden" name="ID" value="0" />
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['form', 'utils'], function () {
+            var $ = layui.jquery, form = layui.form, utils = layui.utils;
+
+            form.on('submit(save)', function (data) {
+                data.field['IMG'] = encodeURIComponent(data.field['IMG']);
+                utils.post('/sys/button/save', data.field);
+                return false;
+            });
+            $('#btn-icon').click(function () {
+                var index = utils.open({
+                    title: '选择ICON',
+                    url: '/sys/menu/icon',
+                    area: ['650px', '650px'],
+                    btn: ['确认', '关闭'],
+                    yes: function (index) {
+                        var icon = utils.getChildFrame('#txtIcon', index);
+                        var value = $.trim(icon.val());
+                        if (value == '') {
+                            utils.alert('请选择ICON');
+                            return;
+                        }
+                        $('#i-icon').html(value);
+                        $('#IMG').val(value);
+                        utils.close(index);
+                    }
+                });
+            });
+            $('#cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var json = '@Html.Raw(ViewBag.ButtonJson)';
+            if (json && json.length > 0) {
+                utils.setFormData(json);
+                var value = $('#IMG').val();
+                $('#i-icon').html(value);
+            }
+        });
+    </script>
+}

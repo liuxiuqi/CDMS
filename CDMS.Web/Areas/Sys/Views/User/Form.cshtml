@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "用户";
+}
+<form class="layui-form" id="form1">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">WWID<span class="red">*</span></label>
+            <div class="layui-input-inline">
+                <input type="text" name="ACCOUNT" autocomplete="off" placeholder="请输入WWID" class="layui-input" lay-verify="required|number" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">中文名<span class="red">*</span></label>
+            <div class="layui-input-inline">
+                <input type="text" name="CNNAME" autocomplete="off" placeholder="请输入中文名" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">英文名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="ENNAME" autocomplete="off" placeholder="请输入英文名" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline">
+                <select type="text" id="SEX" name="SEX" autocomplete="off" placeholder="请选择性别" class="layui-select">
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-inline">
+                <input type="text" name="AGE" autocomplete="off" placeholder="请输入年龄" class="layui-input" lay-verify="number" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-inline">
+                <input type="text" name="EMAIL" autocomplete="off" placeholder="请输入邮箱" class="layui-input" lay-verify="email" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">电话</label>
+            <div class="layui-input-inline">
+                <input type="text" name="PHONE" autocomplete="off" placeholder="请输入电话" class="layui-input" lay-verify="phone|number" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">头像</label>
+            <div class="layui-input-inline">
+                <img class="layui-upload-img" style="width:100px;height:100px" id="IMG" name="IMG">
+            </div>
+            <div class="layui-input-inline">
+                <button type="button" class="layui-btn" id="btn-upload">上传图片</button><input class="layui-upload-file" type="file" name="file">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="save">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary" id="cancel">取消</button>
+            <input type="hidden" name="ID" value="0" />
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['form', 'utils', 'upload'], function () {
+            var $ = layui.jquery, form = layui.form, utils = layui.utils, upload = layui.upload;
+
+            form.on('submit(save)', function (data) {
+                data.field['IMG'] = encodeURIComponent($('#IMG').val());
+                utils.post('/sys/user/save', data.field);
+                return false;
+            });
+
+            var uploadInst = upload.render({
+                elem: '#btn-upload',
+                url: '/sys/user/uploaduserface',
+                before: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        $('#IMG').attr('src', result);
+                    });
+                }
+                , done: function (data) {
+                    utils.alert(data.Msg, data.Flag ? 0 : 1);
+                    $('#IMG').val(data.Data);
+                }
+            })
+            $('#cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var json = '@Html.Raw(ViewBag.UserJson)';
+            if (json && json.length > 0) {
+                utils.setFormData(json);
+                var value = $('#IMG').val();
+                $('#IMG').attr('src', value);
+            }
+        });
+    </script>
+}

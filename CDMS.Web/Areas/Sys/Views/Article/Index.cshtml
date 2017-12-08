@@ -1,0 +1,179 @@
+﻿<form class="layui-form" id="form1">
+    <blockquote class="layui-elem-quote">
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 状态:</label>
+            <div class="layui-input-inline">
+                <select type="text" id="STATUS" name="STATUS" placeholder="请选择状态" class="layui-select">
+                    <option value="0">请选择类型</option>
+                    <option value="1">已审核</option>
+                    <option value="2">未审核</option>
+                </select>
+            </div>
+
+            <label class="layui-form-label">关键字:</label>
+            <div class="layui-input-inline">
+                <input type="text" value="" id="txtKey" placeholder="请输入关键字" class="layui-input" />
+            </div>
+            <div class="layui-input-inline">
+                <a class="layui-btn search_btn" id="btn-query">查询</a>
+            </div>
+            @Html.Action("button", "menu")
+        </div>
+
+    </blockquote>
+</form>
+
+<div class="layui-form">
+    <table class="layui-table" id="articleList"></table>
+</div>
+@section styles{
+    <style type="text/css">
+        .layui-form-label {
+            width: 60px;
+            padding: 9px 5px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 0px;
+        }
+    </style>
+}
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'form', 'utils'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns, form = layui.form;
+
+            var tableId = 'articleList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/article/getList',
+                method: 'post',
+                tr_click_checkable: true,
+                page: true,
+                limit: 20,
+                limits: [20, 30, 50],
+                where: getParameters(),
+                cols: [
+                     [{ checkbox: true, width: '5%' },
+                     { field: 'ID', title: '编号', width: '5%' },
+                     { field: 'TITLE', title: '标题', width: '10%' },
+                     { field: 'AUTHOR', title: '作者', width: '10%' },
+                     { field: 'CategoryName', title: '分类', width: '10%' },
+                     { field: 'CODE', title: '代码', width: '10%' },
+                     {
+                         field: 'STATUS', title: '状态', width: '6%', align: 'center', content: function (value) {
+                             var v = '';
+                             if (value == 1) v = '已审核';
+                             else if (value == 2) v = '未审核';
+                             return v;
+                         }
+                     },
+                     {
+                         field: 'ISRED', title: '推荐', width: '6%', align: 'center', content: function (value, item) {
+                             var chk = value ? ' checked="checked" ' : '';
+                             return '<input type="checkbox" lay-filter="ISRED" lay-skin="switch" data-id="' + item.ID + '" ' + chk + ' value="' + value + '"/>';
+                         }
+                     },
+                     {
+                         field: 'ISHOT', title: '热门', width: '6%', align: 'center', content: function (value, item) {
+                             var chk = value ? ' checked="checked" ' : '';
+                             return '<input type="checkbox" lay-filter="ISHOT" lay-skin="switch" data-id="' + item.ID + '" ' + chk + ' value="' + value + '"/>';
+                         }
+                     },
+                     {
+                         field: 'ISTOP', title: '置顶', width: '6%', align: 'center', content: function (value, item) {
+                             var chk = value ? ' checked="checked" ' : '';
+                             return '<input type="checkbox" lay-filter="ISTOP" lay-skin="switch" data-id="' + item.ID + '" ' + chk + ' value="' + value + '"/>';
+                         }
+                     },
+                     {
+                         field: 'ISDISPLAY', title: '显示', width: '6%', align: 'center', content: function (value, item) {
+                             var chk = value ? ' checked="checked" ' : '';
+                             return '<input type="checkbox" lay-filter="ISDISPLAY" lay-skin="switch" data-id="' + item.ID + '" ' + chk + ' value="' + value + '"/>';
+                         }
+                     },
+                     { field: 'CLICK', title: '点击量', width: '6%', align: 'center' }
+                     ]
+                ]
+            };
+            table.render(options);
+
+            $('#' + btn.btn_query).click(function () {
+                table.reload(tableId, { where: getParameters() });
+            });
+
+            form.on('switch(ISRED)', function (data) {
+                var id = $(data.elem).data('id');
+                utils.post('/sys/article/update', { id: id, type: 1, status: data.elem.checked });
+                layui.stope();
+            });
+
+            form.on('switch(ISHOT)', function (data) {
+                var id = $(data.elem).data('id');
+                utils.post('/sys/article/update', { id: id, type: 2, status: data.elem.checked });
+                layui.stope();
+            });
+
+            form.on('switch(ISTOP)', function (data) {
+                var id = $(data.elem).data('id');
+                utils.post('/sys/article/update', { id: id, type: 3, status: data.elem.checked });
+                layui.stope();
+            });
+
+            form.on('switch(ISDISPLAY)', function (data) {
+                var id = $(data.elem).data('id');
+                utils.post('/sys/article/update', { id: id, type: 4, status: data.elem.checked });
+                layui.stope();
+            });
+
+            $('#' + btn.btn_add).click(function () {
+                var index = utils.open({
+                    title: '添加文章',
+                    url: '/sys/article/form',
+                    maxmin: true,
+                    area: ['750px', '550px']
+                });
+            });
+
+            $('#' + btn.btn_edit).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                else if (len > 1) {
+                    utils.alert('只能选择一行修改');
+                    return;
+                }
+                var index = utils.open({
+                    title: '修改文章',
+                    url: '/sys/article/form?id=' + rows[0].ID,
+                    maxmin: true,
+                    area: ['750px', '550px']
+                });
+            });
+
+            $('#' + btn.btn_delete).click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                utils.confirm('确实要删除选择行吗?', function () {
+                    var ids = [];
+                    $.each(rows, function (i, item) {
+                        ids.push(item.ID);
+                    });
+                    utils.post('/sys/article/delete', { ids: ids });
+                });
+            });
+
+            function getParameters() {
+                return { json: JSON.stringify({ TITLE: $('#txtKey').val(), STATUS: $('#STATUS').val() }) };
+            }
+        });
+    </script>
+}

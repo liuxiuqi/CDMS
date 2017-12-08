@@ -1,0 +1,191 @@
+﻿
+<form class="layui-form" id="form1">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">标题<span class="red">*</span></label>
+            <div class="layui-input-inline">
+                <input type="text" name="TITLE" autocomplete="off" placeholder="请输入标题" class="layui-input" lay-verify="required" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">副标题</label>
+            <div class="layui-input-inline">
+                <input type="text" name="SUBTITLE" autocomplete="off" placeholder="请输入副标题" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">分类<span class="red">*</span></label>
+            <div class="layui-input-inline">
+                <select type="text" id="CATEGORYID" name="CATEGORYID" lay-filter="CATEGORYID" autocomplete="off" placeholder="请选择分类" class="layui-select" lay-verify="required"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">作者</label>
+            <div class="layui-input-inline">
+                <input type="text" name="AUTHOR" value="系统管理员" autocomplete="off" placeholder="请输入作者" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">代码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="CODE" autocomplete="off" placeholder="请输入代码" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">访问量</label>
+            <div class="layui-input-inline">
+                <input type="text" name="CLICK" value="0" autocomplete="off" placeholder="请输入访问量" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">推荐</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="switch" name="ISRED" lay-filter="ISRED" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">热门</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="switch" name="ISHOT" lay-filter="ISHOT" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">置顶</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="switch" name="ISTOP" lay-filter="ISTOP" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">显示</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" checked="checked" value="true" lay-skin="switch" name="ISDISPLAY" lay-filter="ISDISPLAY" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <select type="text" name="STATUS" autocomplete="off" placeholder="请选择状态" class="layui-select">
+                    <option value="1" selected="selected">已审核</option>
+                    <option value="2">未审核</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">外部URL</label>
+            <div class="layui-input-inline">
+                <input type="text" name="LINKURL" autocomplete="off" placeholder="请输入外部URL" class="layui-input" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">汇总</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" autocomplete="off" name="SUMMARY"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SEO标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="SETTITLE" autocomplete="off" placeholder="请输入SEO标题" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SEO关键字</label>
+        <div class="layui-input-block">
+            <input type="text" name="SEOKEYWORDS" autocomplete="off" placeholder="请输入SEO关键字" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SEO描述</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" autocomplete="off" name="SEOREMARK"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容<span class="red">*</span></label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" autocomplete="off" name="CONTENTS" id="CONTENTS" data-type="html"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="save">保存</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="cancel">取消</button>
+            <input type="hidden" name="ID" value="0" />
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['form', 'utils', 'treeSelector', 'layedit'], function () {
+            var $ = layui.jquery, form = layui.form, utils = layui.utils, tree = layui.treeSelector, edit = layui.layedit;
+
+            var editIndex = edit.build('CONTENTS', {
+                height: 180,
+                uploadImage: {
+                    url: '/common/uploadImage' //接口url
+                }
+            });
+
+            form.on('submit(save)', function (data) {
+                var content = edit.getContent(editIndex);
+                if (!content || content.length < 1) {
+                    utils.msg('请填写文章内容');
+                    return;
+                }
+                data.field['CONTENTS'] = encodeURIComponent(content);
+                utils.post('/sys/article/save', data.field);
+                return false;
+            });
+
+            form.on('switch(ISRED)', function (data) {
+                $('input[name="ISRED"]').val(data.elem.checked);
+            });
+
+            form.on('switch(ISHOT)', function (data) {
+                $('input[name="ISHOT"]').val(data.elem.checked);
+            });
+
+            form.on('switch(ISTOP)', function (data) {
+                $('input[name="ISTOP"]').val(data.elem.checked);
+            });
+
+            form.on('switch(ISDISPLAY)', function (data) {
+                $('input[name="ISDISPLAY"]').val(data.elem.checked);
+            });
+
+            $('#cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            var treeOption = {
+                type: 'remote',
+                url: '/sys/category/getTreeSelectList',
+                selector: '#CATEGORYID',
+                repeatString: '&nbsp;&nbsp;',//
+                preString: '',
+                callback: function () {
+                    var json = '@Html.Raw(ViewBag.Json)';
+                    if (json && json.length > 0) {
+                        utils.setFormData(json);
+                        var model = JSON.parse(json);
+                        edit.setContent(editIndex, decodeURIComponent(model.CONTENTS));
+                    }
+                    form.render();
+                }
+            };
+            tree.set(treeOption).render();
+        });
+    </script>
+}

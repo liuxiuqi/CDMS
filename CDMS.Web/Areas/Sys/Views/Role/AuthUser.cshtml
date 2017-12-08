@@ -1,0 +1,109 @@
+﻿<blockquote class="layui-elem-quote">
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            <input type="text" value="" id="txtKey" placeholder="请输入关键字" class="layui-input" />
+        </div>
+        <a class="layui-btn search_btn" id="btn-query">查询</a>
+    </div>
+</blockquote>
+<div class="layui-form">
+    <table class="layui-table" id="userList"></table>
+</div>
+<div class="right">
+    <button class="layui-btn" id="btn-sure" type="button">确定</button>
+    <button type="button" class="layui-btn layui-btn-primary" id="btn-cancel">取消</button>
+    <input type="hidden" id="roleId" name="roleId" value="@ViewBag.RoleId" />
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'utils'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns;
+
+            var tableId = 'userList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/user/getList',
+                method: 'post',
+                tr_click_checkable: true,
+                height: 370,
+                page: true,
+                limit: 20,
+                limits: [20, 30, 50],
+                request: {
+                    pageName: 'page', //页码的参数名称，默认：page
+                    limitName: 'rows' //每页数据量的参数名，默认：limit
+                },
+                where: getParameters(),
+                cols: [
+                     [{
+                         checkbox: true, LAY_CHECKED: function (v, item, i) {
+                             return getChkFlag(item.ID);
+                         }
+                     },
+                     { field: 'ACCOUNT', title: 'WWID', width: 100 },
+                     { field: 'CNNAME', title: '中文名', width: 100 },
+                     { field: 'ENNAME', title: '英文名', width: 100 },
+                     {
+                         field: 'SEX', title: '性别', width: 100, content: function (value, item, index) {
+                             var v = '';
+                             switch (value) {
+                                 case '1':
+                                     v = '男';
+                                     break;
+                                 case '2':
+                                     v = '女';
+                                     break;
+                             }
+                             return v;
+                         }
+                     },
+                     { field: 'EMAIL', title: '邮箱', width: 100 },
+                     { field: 'PHONE', title: '电话', width: 100 }
+                     ]
+                ]
+            };
+            table.render(options);
+
+            $('#' + btn.btn_query).click(function () {
+                table.reload(tableId, { where: getParameters() });
+            });
+
+            $('#btn-sure').click(function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何授权用户');
+                    return;
+                }
+                var ids = [];
+                $.each(rows, function (i, item) {
+                    ids.push(item.ID);
+                });
+                utils.post('/sys/role/addRoleUsers', { roleId: $('#roleId').val(), ids: ids });
+            });
+
+            $('#btn-cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            function getParameters() {
+                return { queryJson: $('#txtKey').val() };
+            }
+
+            var json = '@Html.Raw(ViewBag.UserJson)';
+            var menus = json ? JSON.parse(json) : [];
+            function getChkFlag(id) {
+                var flag = false;
+                $.each(menus, function (i, item) {
+                    if (item.USERID === id) {
+                        flag = true;
+                        return false;
+                    }
+                });
+                return flag;
+            }
+        });
+    </script>
+}

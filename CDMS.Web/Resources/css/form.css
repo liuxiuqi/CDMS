@@ -1,0 +1,19 @@
+﻿.laytable-cell-space {
+    width: 200px;
+}
+
+.red {
+    color: red;
+}
+
+.hidden {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}

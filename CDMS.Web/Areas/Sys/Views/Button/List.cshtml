@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<blockquote class="layui-elem-quote">
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            <input type="text" value="" id="txtKey" placeholder="请输入关键字" class="layui-input" />
+        </div>
+        <a class="layui-btn search_btn" id="btn-query">查询</a>
+    </div>
+</blockquote>
+<div class="layui-form">
+    <table class="layui-table" id="buttonList"></table>
+</div>
+<form class="layui-form" id="form1">
+    <div class="right">
+        <button class="layui-btn" id="btn-sure" type="button">确定</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="btn-cancel">取消</button>
+        <input type="hidden" id="pid" name="pid" value="@ViewBag.PID" />
+    </div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        layui.use(['jquery', 'table', 'utils'], function () {
+            var $ = layui.jquery, table = layui.table, utils = layui.utils, btn = utils.btns;
+
+            var tableId = 'buttonList';
+            var options = {
+                id: tableId,
+                elem: '#' + tableId,
+                url: '/sys/button/getList',
+                height: 400,
+                method: 'post',
+                tr_click_checkable: true,
+                page: true,
+                limit: 20,
+                limits: [20, 30, 50],
+                request: {
+                    pageName: 'page', //页码的参数名称，默认：page
+                    limitName: 'rows' //每页数据量的参数名，默认：limit
+                },
+                where: getParameters(),
+                cols: [
+                     [{ checkbox: true, width: '10%' },
+                     { field: 'NAME', title: '按钮名称', width: '30%' },
+                     {
+                         field: 'IMG', title: 'ICON', width: '15%', align: 'center',
+                         content: function (value, item, index) {
+                             if (value) return '<i class="layui-icon">' + value + '</i>';
+                             return '';
+                         }
+                     },
+                     { field: 'CLASSNAME', title: '样式', width: '20%' },
+                     { field: 'SORTID', title: '排序', width: '15%', align: 'center' }
+                     ]
+                ]
+            };
+            table.render(options);
+
+            $('#' + btn.btn_query).click(function () {
+                table.reload(tableId, { where: getParameters() });
+            });
+
+            $('#btn-sure').on('click', function () {
+                var rows = table.checkStatus(tableId).data;
+                var len = rows.length;
+                if (len < 1) {
+                    utils.alert('没有选择任何行');
+                    return;
+                }
+                var ids = [];
+                $.each(rows, function (i, item) {
+                    ids.push(item.ID);
+                });
+                utils.post('/sys/button/addButtons', { pid: $('#pid').val(), ids: ids });
+                return false;
+            });
+
+            $('#btn-cancel').on('click', function () {
+                utils.closeFrame();
+            });
+
+            function getParameters() {
+                return { queryJson: $('#txtKey').val() };
+            }
+        });
+    </script>
+}
